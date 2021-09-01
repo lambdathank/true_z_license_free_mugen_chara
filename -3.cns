@@ -1,0 +1,131 @@
+[Statedef -3]
+
+;ゲーム中に常にいつでも開始したいステート、ここでは「着地音」に使用しています
+;下の条件は「52か106のステートに移動して１フレーム目に」と言う事です。
+;52と106はバックステップとジャンプの着地のステートです。
+[State -3, Landing Sound]
+type = PlaySnd
+triggerall = Time = 1
+trigger1 = stateno = 52 
+trigger2 = stateno = 106 
+value = 40, 0
+
+;※※※※※※※※※※※※※※※※※※※※ハイジャンプ
+;理論は簡単
+;ハイジャンプコマンドを入れた「瞬間」、varスイッチを１にする
+;でハイジャンプのコマンドは最後がU、つまりジャンプする
+;そしてジャンプステート５０の時にvarスイッチが１ならveladdで加速します
+;varスイッチを０にするトリガーは「ステート５０の２フレーム目」です。
+
+[State 821, 1] ;←コマンドを入れたらVarをON
+type = varset
+trigger1 = command = "jump"
+trigger1 = ctrl = 1
+trigger1 = statetype = s
+v = 1
+value = 1
+
+[State 821, 1] ;←varをOFFにするステート
+type = varset
+trigger1 = stateno = 50
+trigger1 = time = 2
+v = 1
+value = 0
+
+[State 821, 1] ;←ジャンプ力にveladdを使って加速
+type = veladd
+trigger1 = var(1) = 1
+trigger1 = stateno = 50
+y = -1.5
+
+[State 821, 1] ;←前にボタンを押してたら前にも加速
+type = veladd
+trigger1 = var(1) = 1
+trigger1 = stateno = 50
+trigger1 = command = "holdfwd"
+x = 1.3
+
+[State 821, 1] ;←後ろなら後ろに加速
+type = veladd
+trigger1 = var(1) = 1
+trigger1 = stateno = 50
+trigger1 = command = "holdback"
+x = -0.5
+
+[State 50, 4];←成功したときの残像
+type = AfterImage
+trigger1 = var(1) = 1
+trigger1 = stateno = 50
+time = 20
+trans = add1
+timegap = 1
+framegap = 2
+length = 8
+palbright = 12,12,12
+palcontrast = 225,225,225
+palpostbright = 0,0,0
+paladd = 0,0,0
+palmul = 1,1,1
+
+;※※※※※※※※※※※※※※※※※※※※カウンター
+;理論を解説
+;立ちガードのステートは分けると「ガードする動作」「攻撃をガードした動作」「ガードを解く動作」となります
+;ちょうどステートが分割されてるなら「攻撃をガードした動作」の時にコマンドを入れたらそのステートに飛ぶことに
+;すればカウンターの完成です
+;ただそれだとちょっと簡単なので成功したら一瞬光ってとまり、技ゲージをちょっと減らすようにします。
+;今回はカンフー突き手の弱・強に対応させてます
+
+[State 10000, 1];←成功したとき一瞬無敵になる
+type = NotHitBy
+triggerall = (stateno = 150) ||(stateno = 151) 
+triggerall = power >= 100
+trigger1 = command = "QCF_x"
+trigger2 = command = "QCF_y"
+value = SCA, NA, SA, HA, NT, ST, HT
+time = 10
+
+[State 4000,Spark];←成功したとき一瞬止まる
+type = Pause
+triggerall = (stateno = 150) ||(stateno = 151) 
+triggerall = power >= 100
+trigger1 = command = "QCF_x"
+trigger2 = command = "QCF_y"
+time = 7
+pausemovetime = 7
+poweradd = -100
+
+[State 1300, 5];←成功したとき一瞬止まる、小さいけど効果的です
+type = Envcolor
+triggerall = (stateno = 150) ||(stateno = 151) 
+triggerall = power >= 100
+trigger1 = command = "QCF_x"
+trigger2 = command = "QCF_y"
+persistent = 0
+ignorehitpause = 1
+value = 255, 255, 255
+time = 1
+under = 1
+supermove = 1
+
+[State 810, Hurt 11];←成功したらパワーが１００減る
+type = powerAdd
+triggerall = (stateno = 150) ||(stateno = 151) 
+triggerall = power >= 100
+trigger1 = command = "QCF_x"
+trigger2 = command = "QCF_y"
+value = -100
+
+[State -1, Kung Fu Throw];←弱・突き手をガード中に入力したら。
+type = ChangeState
+value = 1000
+triggerall = power >= 100;←これでパワーが１００以上ないと成功しない
+triggerall = command = "QCF_x"
+trigger1 = (stateno = 150) ||(stateno = 151) 
+
+[State -1, Kung Fu Throw];←強・突き手をガード中に入力したら。
+type = ChangeState
+value = 1010
+triggerall = power >= 100
+triggerall = command = "QCF_y"
+trigger1 = (stateno = 150) ||(stateno = 151) 
+

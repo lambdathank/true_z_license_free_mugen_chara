@@ -1,0 +1,126 @@
+;※※※※※※※※※※※※※※※※※※※※前避け
+;理論説明
+;今回は避けなので当たり判定もいらない移動のみのステートです。
+;しかし世の中、前のみではない、「後ろ避け」もあります。
+;というわけで効率化を目指してみよう・・・安易？(-_-;)
+;まずスプライトを分割すると開始、回転、終了になります。
+;なぜ分割するかというと「後ろ避け」を作るから。
+;前のスプライト順を１，２，３とするなら後ろは３，２，１とすればオッケーになるというわけだ。
+;この時点でステート６個、ＡＩＲが３個・・・・効率化成功してる・・・か？（文句は言わないで(-_-;)
+
+;※※※※※※※※※※※※※※※※※※※※前避けの開始
+[Statedef 2200]
+type    = S
+movetype= A
+physics = S
+juggle  = 0
+poweradd= 0
+ctrl = 0
+velset = 3,0
+anim = 2200
+sprpriority = 2
+
+
+[State -1, Kung Fu Throw]
+type = ChangeState
+trigger1 = animtime = 0
+value = 2210
+ctrl = 0
+
+;※※※※※※※※※※※※※※※※※※※※前避けの回転
+[Statedef 2210]
+type    = S
+movetype= A
+physics = S
+juggle  = 0
+poweradd= 0
+ctrl = 0
+velset = 10,0
+anim = 2210
+sprpriority = 2
+
+[State -1, Kung Fu Throw]
+type = ChangeState
+trigger1 = time = 10
+value = 2220
+ctrl = 0
+
+;※※※※※※※※※※※※※※※※※※※※前避けの終了
+[Statedef 2220]
+type    = S
+movetype= A
+physics = S
+juggle  = 0
+poweradd= 0
+ctrl = 0
+velset = 0,0
+anim = 2220
+sprpriority = 2
+
+[State -1, Kung Fu Throw]
+type = ChangeState
+trigger1 = animtime = 0
+value = 0
+ctrl = 1
+
+
+
+
+
+
+
+
+
+;※※※※※※※※※※※※※※※※※※※※後避けの開始
+[Statedef 2250]
+type    = S
+movetype= A
+physics = S
+juggle  = 0
+poweradd= 0
+ctrl = 0
+velset = -3,0
+anim = 2220;←前避けの３にあたるスプライト
+sprpriority = 2
+
+[State -1, Kung Fu Throw]
+type = ChangeState
+trigger1 = animtime = 0
+value = 2260
+ctrl = 0
+
+;※※※※※※※※※※※※※※※※※※※※後避けの回転
+[Statedef 2260]
+type    = S
+movetype= A
+physics = S
+juggle  = 0
+poweradd= 0
+ctrl = 0
+velset = -10,0
+anim = 2210;←前避けの２にあたるスプライト
+sprpriority = 2
+
+[State -1, Kung Fu Throw]
+type = ChangeState
+trigger1 = animtime = 0
+value = 2270
+ctrl = 0
+
+;※※※※※※※※※※※※※※※※※※※※後避けの終了
+[Statedef 2270]
+type    = S
+movetype= A
+physics = S
+juggle  = 0
+poweradd= 0
+ctrl = 0
+velset = 0,0
+anim = 2200;←前避けの１にあたるスプライト
+sprpriority = 2
+
+[State -1, Kung Fu Throw]
+type = ChangeState
+trigger1 = animtime = 0
+value = 0
+ctrl = 1

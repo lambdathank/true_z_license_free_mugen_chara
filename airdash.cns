@@ -1,0 +1,21 @@
+;※※※※※※※※※※※※※※※※※※※※空中ダッシュ
+;空中なのでtypeとphysicsがＡ、つまり空中です。
+;phisicsをＡにすると地上についた瞬間強制的に立ち状態に戻ります。
+;それとctrl = 1にすることで空中ダッシュ中はいつでも攻撃ができるようにしてます。
+
+[Statedef 2300]
+type    = a
+movetype= A
+physics = a
+juggle  = 0
+poweradd= 0
+ctrl = 1
+velset = 8,-2
+anim = 2210;←避けの回転スプライトを利用
+sprpriority = 2
+
+[State 821, 1];←とりあえず重力の役目
+type = VelAdd
+Trigger1 = 1
+y = .4
+x = 0.5

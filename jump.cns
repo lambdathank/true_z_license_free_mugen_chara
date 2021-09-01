@@ -1,0 +1,77 @@
+;------------------------------------------------------
+;普通のジャンプ
+[Statedef 50]
+type = A
+physics = A
+
+;下の50,0は三角跳びには関係ありませんが、
+;空中戦主体のキャラは追加しておくと便利です。
+[State 50, 0]
+type = turn
+trigger1 = time = 0
+trigger1 = p2dist x < 0
+
+[State 50, 1]
+type = VarSet
+trigger1 = Time = 0
+sysvar(1) = 0
+
+[State 50, 2]
+type = ChangeAnim
+trigger1 = Time = 0
+value = ifelse((vel x)=0, 41, ifelse((vel x)>0, 42, 43))
+
+[State 50, 3]
+type = ChangeAnim
+trigger1 = Vel y > -2
+trigger1 = SelfAnimExist(anim + 3)
+persistent = 0
+value = Anim + 3
+
+;相手の方向にある画面端で、後ろと上を押しっぱなしにすると
+;画面中央の方向に向き直ります。
+[State 50, 4]
+type = Turn
+triggerall = frontedgebodydist < 3
+triggerall = pos y < -12
+trigger1 = command = "holdup"
+trigger1 = command = "holdback"
+
+;どちらかの画面端で｢上と画面中央に向かった方向｣の
+;同時押しで、三角跳び専用ステイトへ。
+[State 50, 5]
+type = ChangeState
+triggerall = backedgebodydist < 3
+triggerall = pos y < -12
+trigger1 = command = "holdup"
+trigger1 = command = "holdfwd"
+value = 53
+
+;------------------------------------------------------
+;三角跳び
+;　commonで使われていないステイトなので、
+;　ここで使っちゃいましょう！
+[Statedef 53]
+type = A
+physics = A
+ctrl = 0
+anim = 42
+
+[State 53, 1]
+type = velset
+trigger1 = time < 2
+x = 0
+y = 0
+
+[State 53, 2]
+type = VelSet
+trigger1 = Time = 2
+x = const(velocity.airjump.fwd.x)
+y = const(velocity.airjump.y)
+
+[State 53, 3]
+type = ChangeAnim
+trigger1 = Vel y > -2
+trigger1 = SelfAnimExist(45)
+persistent = 0
+value = 45

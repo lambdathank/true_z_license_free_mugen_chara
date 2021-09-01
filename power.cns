@@ -1,0 +1,41 @@
+;※※※※※※※※※※※※※※※※※※※※パワー溜め
+;理論説明
+;まずボタン同時おしをしたらこのステートに飛びます、そして押してる間は動きつつパワーを溜めます。
+;しかしそうすると一回ちょこっと押したらこの一連の動作を行なってしまうので
+;一番下のチェンジステートで「ボタンを離したら」というトリガーで立ち状態に戻るようにしてます
+;
+
+[Statedef 2000]
+type    = S
+movetype= A
+physics = S
+juggle  = 0
+poweradd= 0
+ctrl = 0
+velset = 0,0
+anim = 2000
+sprpriority = 2
+
+[State 810, Hurt 11];←パワーを溜める
+type = powerAdd
+triggerall = power < 3000
+trigger1 = animelemtime(1) > 1 
+value = 5
+
+[State 810, Hurt 11];←最後のスプライトで振り返ります、ctrlが0なので戻ることはありません
+type = turn
+trigger1 = animelem = 13
+
+[State -1, Kung Fu Throw];←すべての動きが終わったらもう一度同じステート（2000）に戻ります
+type = ChangeState
+trigger1 = animtime = 0
+value = 2000
+ctrl = 0
+
+[State -1, Kung Fu Throw];←ボタンを離したりパワーがＭＡＸなら立ち動作に戻ります
+type = ChangeState
+trigger1 = command != "holdx"
+trigger2 = command != "holdy"
+trigger3 = power = 3000
+value = 0
+ctrl = 1

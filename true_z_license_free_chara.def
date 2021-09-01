@@ -1,0 +1,24 @@
+; ここにキャラ情報を書いてください
+[Info]
+name = "true_z_license_free_chara"        ;キャラの名前
+displayname = "true_z_license_free_chara" ;表示されるキャラの名前
+versiondate = 11,22,2000    ;キャラの更新情報
+mugenversion = 11,22,2000   ;キャラが動くmugenのバージョン
+author = "Balito"         ;キャラの製作者名
+pal.defaults = 6,3,4,2      ;敵としてでるキャラのパレット
+
+; Files for the player
+[Files]
+cmd     = kfm.cmd   ;キャラのコマンド
+cns     = kfm.cns   ;キャラのプログラム
+st      = kfm.cns   ;キャラのプログラム
+st1     = -3.cns
+st2     = jump.cns
+st3     = power.cns
+st4     = away.cns
+st5     = airdash.cns
+stcommon = common1.cns 
+sprite  = kfm.sff   ;キャラの絵
+anim    = kfm.air   ;キャラの動き
+sound   = kfm.snd   ;キャラの音
+pal1    = kfm.act
